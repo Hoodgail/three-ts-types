@@ -1,13 +1,21 @@
 import { BindMode } from "../constants.js";
 import { BufferGeometry } from "../core/BufferGeometry.js";
-import { Object3DEventMap } from "../core/Object3D.js";
+import { JSONMeta, Object3DEventMap, Object3DJSON, Object3DRootJSON } from "../core/Object3D.js";
 import { Material } from "../materials/Material.js";
 import { Box3 } from "../math/Box3.js";
-import { Matrix4 } from "../math/Matrix4.js";
+import { Matrix4, Matrix4Tuple } from "../math/Matrix4.js";
 import { Sphere } from "../math/Sphere.js";
 import { Vector3 } from "../math/Vector3.js";
-import { Mesh } from "./Mesh.js";
+import { Mesh, MeshJSONObject } from "./Mesh.js";
 import { Skeleton } from "./Skeleton.js";
+
+export interface SkinnedMeshJSONObject extends MeshJSONObject {
+    bindMode: BindMode;
+    bindMatrix: Matrix4Tuple;
+    skeleton?: string;
+}
+
+export type SkinnedMeshJSON = Object3DJSON<SkinnedMeshJSONObject>;
 
 /**
  * A mesh that has a {@link THREE.Skeleton | Skeleton} with {@link Bone | bones} that can then be used to animate the vertices of the geometry.
@@ -145,4 +153,7 @@ export class SkinnedMesh<
      * @param vector
      */
     applyBoneTransform(index: number, vector: Vector3): Vector3;
+
+    toJSON(meta: JSONMeta): SkinnedMeshJSON;
+    toJSON(): Object3DRootJSON<SkinnedMeshJSONObject>;
 }

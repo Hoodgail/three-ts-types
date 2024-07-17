@@ -4,22 +4,30 @@ import { CubicInterpolant } from "../math/interpolants/CubicInterpolant.js";
 import { DiscreteInterpolant } from "../math/interpolants/DiscreteInterpolant.js";
 import { LinearInterpolant } from "../math/interpolants/LinearInterpolant.js";
 
-export class KeyframeTrack {
+export interface KeyframeTrackJSON<V, T> {
+    name: string;
+    times: number[];
+    values: V[];
+    interpolation?: InterpolationModes;
+    type: T;
+}
+
+export class KeyframeTrack<Value = any> {
     /**
      * @param name
      * @param times
      * @param values
      * @param [interpolation=THREE.InterpolateLinear]
      */
-    constructor(name: string, times: ArrayLike<number>, values: ArrayLike<any>, interpolation?: InterpolationModes);
+    constructor(name: string, times: ArrayLike<number>, values: ArrayLike<Value>, interpolation?: InterpolationModes);
 
     name: string;
     times: Float32Array;
-    values: Float32Array;
+    values: ArrayLike<Value>;
 
     ValueTypeName: string;
-    TimeBufferType: Float32Array;
-    ValueBufferType: Float32Array;
+    TimeBufferType: typeof Float32Array;
+    ValueBufferType: typeof Float32Array | typeof Array;
 
     /**
      * @default THREE.InterpolateLinear
@@ -43,5 +51,7 @@ export class KeyframeTrack {
     optimize(): KeyframeTrack;
     clone(): this;
 
-    static toJSON(track: KeyframeTrack): any;
+    static toJSON<Track extends KeyframeTrack>(
+        track: Track,
+    ): KeyframeTrackJSON<Track extends KeyframeTrack<infer V> ? V : never, Track["ValueTypeName"]>;
 }

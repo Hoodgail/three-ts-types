@@ -1,7 +1,20 @@
 import { BufferGeometry } from "../core/BufferGeometry.js";
-import { Object3D, Object3DEventMap } from "../core/Object3D.js";
+import {
+    JSONMeta,
+    Object3D,
+    Object3DEventMap,
+    Object3DJSON,
+    Object3DJSONObject,
+    Object3DRootJSON,
+} from "../core/Object3D.js";
 import { Material } from "../materials/Material.js";
 import { Vector3 } from "../math/Vector3.js";
+
+export interface MeshJSONObject extends Object3DJSONObject {
+    geometry: string;
+}
+
+export type MeshJSON = Object3DJSON<MeshJSONObject>;
 
 /**
  * Class representing triangular {@link https://en.wikipedia.org/wiki/Polygon_mesh | polygon mesh} based objects.
@@ -81,4 +94,7 @@ export class Mesh<
      * @param target
      */
     getVertexPosition(index: number, target: Vector3): Vector3;
+
+    toJSON(meta: JSONMeta): MeshJSON;
+    toJSON(): Object3DRootJSON<MeshJSONObject>;
 }
